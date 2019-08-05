@@ -6,7 +6,7 @@
         collapsible
         v-model="collapsed">
             <div class="logo" >
-                <img src="/img/logo.png" alt="">
+                <img src="/img/logo_white.png" alt="">
             </div>
             
             <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['1']">
@@ -38,6 +38,12 @@
                     <router-link to="/admin/form">
                         <a-icon type="snippets" />
                         <span>表單管理</span>
+                    </router-link>
+                </a-menu-item>
+                <a-menu-item key="7">
+                    <router-link to="/admin/setting">
+                        <a-icon type="setting" />
+                        <span>系統設定</span>
                     </router-link>
                 </a-menu-item>
             </a-menu>

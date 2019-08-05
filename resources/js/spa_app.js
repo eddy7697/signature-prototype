@@ -36,6 +36,7 @@ import DashBoard from './view/Components/dashboard/DashBoard.vue'
 import Form from './view/Components/form/Form.vue'
 import User from './view/Components/user/User.vue'
 import Admin from './view/Components/admin/Admin.vue'
+import Setting from './view/Components/setting/Setting.vue'
 
 Vue.config.productionTip = false
 
@@ -72,10 +73,13 @@ const router = new VueRouter({
                     path: 'admin',
                     name: 'Admin',
                     component: Admin
+                },{
+                    path: `${prefix}/setting`,
+                    name: 'Setting',
+                    component: Setting
                 }
             ]
-        },
-        {
+        },{
             path: `${prefix}/Login`,
             name: 'Login',
             component: Login

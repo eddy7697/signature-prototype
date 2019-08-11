@@ -1,4 +1,7 @@
-export function resultHandler(msg, res, callback, store) {
+export function resultHandler(vue, res, callback) {
+    let store = vue.$store,
+        msg = vue.$message
+
     if (typeof(res.data.error) !== 'undefined') {
         switch (res.data.error) {
             case 'Token not provided':
@@ -8,11 +11,17 @@ export function resultHandler(msg, res, callback, store) {
             case 'TOKEN_INVALID':
                 store.dispatch('auth/tokenExpired')
                 msg.error('登入權杖失效')
+            case 'TOKEN_EXPIRED':
+                store.dispatch('auth/tokenExpired')
+                msg.error('登入逾時')
             default:
                 break;
         }
 
         return
     }
-    callback()
+
+    if (typeof(callback) == 'function') {
+        callback()    
+    }
 }

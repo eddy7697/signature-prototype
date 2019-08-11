@@ -27,6 +27,12 @@ const actions = {
                 localStorage.removeItem('user')
                 commit('AUTHENCATION_FAILURE')    
                 commit('app/PAGELODING', false, { root: true })
+            }).catch(err => {
+                if (err.response.data.message == 'Token has expired') {
+                    commit('app/HANDLE_EXCEPTION', 1002, { root: true })   
+                    commit('AUTHENCATION_FAILURE')    
+                    commit('app/PAGELODING', false, { root: true }) 
+                }
             })
     },
     tokenExpired({ commit }) {

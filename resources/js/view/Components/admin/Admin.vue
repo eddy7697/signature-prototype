@@ -40,11 +40,11 @@ export default {
             this.$store.dispatch('app/isLoading', true)
             axios.post(this.urlPath)
                 .then(res => {
-                    resultHandler(this.$message, res, () => {
+                    resultHandler(this, res, () => {
                         this.pageData = res.data
-                    }, this.$store)
+                    })
                 }).catch(err => {
-
+                    resultHandler(this, res)
                 }).then(() => {
                     this.$store.dispatch('app/isLoading', false)
                 })

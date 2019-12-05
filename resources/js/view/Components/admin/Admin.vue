@@ -24,6 +24,7 @@
 
 <script>
 import {resultHandler} from '../../../handler/resultHandler'
+import errorHandler from '../../../handler/errorHandler'
 
 export default {
     data() {
@@ -35,6 +36,7 @@ export default {
     created() {
         this.getData()
     },
+    mixins: [errorHandler],
     methods: {
         getData() {
             this.$store.dispatch('app/isLoading', true)
@@ -44,7 +46,7 @@ export default {
                         this.pageData = res.data
                     })
                 }).catch(err => {
-                    resultHandler(this, res)
+                    this.errorHandler(err)
                 }).then(() => {
                     this.$store.dispatch('app/isLoading', false)
                 })

@@ -35,6 +35,20 @@ const actions = {
                 }
             })
     },
+    refreshUserData({commit}) {
+        commit('app/PAGELODING', true, { root: true })
+
+        axios.post('/api/auth/getAuthUser')
+            .then(res => {
+                let oldUser = JSON.parse(localStorage.getItem('user'))
+
+                // 更新使用者資料於localStorage
+                oldUser.user = res.data
+                localStorage.setItem('user', JSON.stringify(oldUser))
+
+                commit('REFRESH_USER_DATA', res.data)
+            })
+    },
     tokenExpired({ commit }) {
         localStorage.removeItem('user')
         commit('AUTHENCATION_FAILURE')    
@@ -56,6 +70,10 @@ const mutations = {
         state.user = new Object
 
         window.axios.defaults.headers.common['Authorization'] = null
+    },
+    REFRESH_USER_DATA(state, user) {
+        state.user.user = user
+        
     }
 }
 

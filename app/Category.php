@@ -15,12 +15,12 @@ class Category extends Model
      * @var array
      */
     protected $fillable = [
-        'categoryTitle',
-        'parentId',
-        'type',
-        'featureImage',
-        'categoryDescription',
-        'sortKey'
+        'parent_id',
+        'category_title',
+        'category_type',
+        'feature_image',
+        'description',
+        'sort_key'
     ];
 
     protected static function boot()

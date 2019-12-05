@@ -42,6 +42,9 @@ export default {
 		auth(token) {
 			this.checkAuth()
 		},
+		/**
+		 * 監聽是否有錯誤訊息
+		 */
 		exception: {
 			handler(excep) {
 				this.$message.error(handler(excep.code))

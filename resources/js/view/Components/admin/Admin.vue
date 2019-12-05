@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import {resultHandler} from '../../../handler/resultHandler'
 import errorHandler from '../../../handler/errorHandler'
 
 export default {
@@ -42,9 +41,7 @@ export default {
             this.$store.dispatch('app/isLoading', true)
             axios.post(this.urlPath)
                 .then(res => {
-                    resultHandler(this, res, () => {
-                        this.pageData = res.data
-                    })
+                    this.pageData = res.data
                 }).catch(err => {
                     this.errorHandler(err)
                 }).then(() => {

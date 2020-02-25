@@ -31,6 +31,7 @@ Route::group(['prefix' => 'admin'], function ()
     Route::post('get', 'Backend\AdminController@getAdmins');
 });
 
+Route::post('/sign/save', 'SignController@saveSign');
 
 Route::middleware('jwt.auth')->get('admins', function () {
     return auth('admin')->user();

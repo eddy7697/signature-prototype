@@ -1,15 +1,13 @@
 <template>
     <div class="container">
-        <button>Clear</button>
+        <button @click="clearPad">Clear</button>
         <button @click="saveSign">Save</button>
         <input type="range" name="pw" min="1" max="10" value="2" v-model="lineWidth">
         <input type="color" v-model="strokeStyle">
         <div class="canvas-container">
-            <canvas id="canvas" 
+            <canvas id="myCanvas" 
+                ref="myCanvas"
                 v-if="canvasInitialized"
-                v-on:mousedown="handleMouseDown" 
-                v-on:mouseup="handleMouseUp" 
-                v-on:mousemove="handleMouseMove" 
                 :width="`${canvasWidth}px`" :height="`${canvasHeight}px`">
 
             </canvas>
@@ -27,12 +25,21 @@
     export default {
         mounted() {
             let container = $('.canvas-container')
+            let canvas = this.$refs.myCanvas
             
             this.canvasWidth = container.width()
             this.canvasHeight = container.height()
 
+            canvas.addEventListener('mousedown', this.mouseDown);
+            canvas.addEventListener('mousemove', this.mouseMove);
+            canvas.addEventListener('mouseup', this.mouseUp);
+
+            canvas.addEventListener('touchstart', this.touchStart);
+            canvas.addEventListener('touchmove', this.touchMove);
+            canvas.addEventListener('touchend', this.touchEnd);
+
             this.$nextTick(() => {
-                this.canvasInitialized = true
+                this.ctx = canvas.getContext('2d')
             })
         },
         data() {
@@ -42,37 +49,21 @@
                 csrftoken: document.head.querySelector('meta[name="csrf-token"]').content,
                 strokeStyle: '#000000',
                 lineWidth: 2,
-                mouse: {
-                    current: {
-                        x: 0,
-                        y: 0
-                    },
-                    previous: {
-                        x: 0,
-                        y: 0
-                    },
-                    down: false
-                },
                 canvasWidth: container.width(),
                 canvasHeight: container.height(),
-                canvasInitialized: false,
-                imageBase64: null
-            }
-        },
-        computed: {
-            currentMouse() {
-                var c = document.getElementById("canvas");
-                var rect = c.getBoundingClientRect();
-                
-                return {
-                    x: this.mouse.current.x - rect.left,
-                    y: this.mouse.current.y - rect.top
-                }
+                canvasInitialized: true,
+                imageBase64: null,
+
+                /**
+                 * canvas
+                 */
+                draw: false,
+                ctx: null,
             }
         },
         methods: {
             saveSign() {
-                let c = document.getElementById("canvas")
+                let c = this.$refs.myCanvas
                 let vo = {
                     imageBase64: c.toDataURL()
                 }
@@ -89,60 +80,66 @@
                         FileDownload(response.data, 'result.pdf');
                     })
             },
-            draw(event) {
-                if (this.mouse.down) {
-                    var c = document.getElementById("canvas");
+            getMousePos(event) {
+                var rect = this.$refs.myCanvas.getBoundingClientRect()
 
-                    var ctx = c.getContext("2d");
+                return {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top
+                };   
+            },
+            mouseDown(e) {
+                let mousePos = this.getMousePos(e)
 
-                    ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+                e.preventDefault()
 
+                this.ctx.strokeStyle = this.strokeStyle
+                this.ctx.lineWidth = this.lineWidth
+                this.ctx.beginPath()
+                this.ctx.moveTo(mousePos.x, mousePos.y)
 
-                    ctx.lineTo(this.currentMouse.x, this.currentMouse.y);
-                    ctx.strokeStyle = this.strokeStyle;
-                    ctx.lineWidth = this.lineWidth;
-                    ctx.imageSmoothingEnabled = true
-                    ctx.stroke()
+                this.draw = true                
+            },
+            mouseMove(e) {
+                if (this.draw) {
+                    let mousePos = this.getMousePos(e)
+
+                    this.ctx.lineTo(mousePos.x, mousePos.y)
+                    this.ctx.stroke()                    
                 }
-
             },
-            handleMouseDown(event) {
-                this.mouse.down = true;
-                this.mouse.current = {
-                    x: event.pageX,
-                    y: event.pageY
+            mouseUp(e) {
+                this.draw = false
+            },
+            touchStart(e) {
+                let mousePos = this.getMousePos(e.targetTouches[0])
+
+                e.preventDefault()
+
+                this.ctx.strokeStyle = this.strokeStyle
+                this.ctx.lineWidth = this.lineWidth
+                this.ctx.beginPath()
+                this.ctx.moveTo(mousePos.x, mousePos.y)
+
+                this.draw = true
+            },
+            touchMove(e) {
+                if (this.draw) {
+                    let mousePos = this.getMousePos(e.targetTouches[0])
+
+                    this.ctx.lineTo(mousePos.x, mousePos.y)
+                    this.ctx.stroke() 
                 }
-
-                var c = document.getElementById("canvas");
-                var ctx = c.getContext("2d");
-
-                ctx.moveTo(this.currentMouse.x, this.currentMouse.y)
-
-
             },
-            handleMouseUp() {
-                this.mouse.down = false;
+            touchEnd(e) {
+                this.draw = false
             },
-            handleMouseMove(event) {
+            clearPad(){
+                var canvas = this.$refs.myCanvas
+                var ctx = canvas.getContext("2d")
 
-                this.mouse.current = {
-                    x: event.pageX,
-                    y: event.pageY
-                }
-
-                this.draw(event)
-
-            },
-            
-        },
-        ready() {
-            console.log(123);
-            
-            var c = document.getElementById("canvas");
-            var ctx = c.getContext("2d");
-            ctx.translate(0.5, 0.5);
-            ctx.imageSmoothingEnabled = false;
-            // this.draw();
+                ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+            }
         }
     }
 </script>

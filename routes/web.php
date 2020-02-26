@@ -14,6 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/ipad', function ()
+{
+    return view('ipadmini');
+});
 
 // Auth::routes();
 

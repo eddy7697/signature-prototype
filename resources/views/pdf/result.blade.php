@@ -6,7 +6,7 @@
     <title>Digi Sign</title>
 </head>
 <body>
-    This is sign prototype
+    <p>This is sign prototype</p>
     <img src="{{$image}}" width="70%" alt="">
 </body>
 </html>

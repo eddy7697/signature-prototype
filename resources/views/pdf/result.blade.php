@@ -7,6 +7,6 @@
 </head>
 <body>
     This is sign prototype
-    <img src="{{$image}}" width="100%" alt="">
+    <img src="{{$image}}" width="70%" alt="">
 </body>
 </html>

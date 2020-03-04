@@ -19,4 +19,15 @@ class SignController extends Controller
         ]);
         return $pdf->download("result_$filename.pdf");
     }
+
+    public function savePic(Request $request)
+    {
+        $im = imagecreatefromstring($request->imageBase64);
+        $source_width = imagesx($im);
+        $source_height = imagesy($im);
+        $ratio =  $source_height / $source_width;
+
+        $new_width = 300; // assign new width to new resized image
+        $new_height = $ratio * 300;
+    }
 }

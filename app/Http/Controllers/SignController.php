@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 use PDF;
+use Image;
 
 class SignController extends Controller
 {
@@ -20,14 +22,28 @@ class SignController extends Controller
         return $pdf->download("result_$filename.pdf");
     }
 
-    public function savePic(Request $request)
+    public function resize_image(Request $request) 
     {
-        $im = imagecreatefromstring($request->imageBase64);
-        $source_width = imagesx($im);
-        $source_height = imagesy($im);
-        $ratio =  $source_height / $source_width;
+        $image = $request->file('image');
+        $filename = rand(1111111, 9999999).$image->getClientOriginalName();
 
-        $new_width = 300; // assign new width to new resized image
-        $new_height = $ratio * 300;
+        // $image->move(storage_path("uploads"), $filename);
+
+        $resize_image = Image::make($image->getRealPath());
+
+        $resize_image->resize(1024, null, function($constraint){
+            $constraint->aspectRatio();
+        })->save($filename);
+
+        $path = $filename;
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+        $pdf = PDF::loadView('pdf.result', [
+            'image' => $base64
+        ]);
+        return $pdf->download("result_$filename.pdf");
+        // Storage::put($file->getClientOriginalName(), file_get_contents($file));
     }
 }

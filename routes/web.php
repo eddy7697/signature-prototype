@@ -18,7 +18,10 @@ Route::get('/ipad', function ()
 {
     return view('ipadmini');
 });
-
+Route::get('/imageCapture', function ()
+{
+    return view('imageCapture');
+});
 // Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');

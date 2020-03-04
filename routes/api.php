@@ -32,6 +32,7 @@ Route::group(['prefix' => 'admin'], function ()
 });
 
 Route::post('/sign/save', 'SignController@saveSign');
+Route::post('/image/save', 'SignController@resize_image');
 
 Route::middleware('jwt.auth')->get('admins', function () {
     return auth('admin')->user();
